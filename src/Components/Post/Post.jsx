@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import "../../Styles/Post.css"
 
-import classes from "./Styles.module.css";
+import Button from "../../UI/Button/Button";
 
 Post.propTypes = {
    post: PropTypes.shape({
@@ -13,12 +14,12 @@ Post.propTypes = {
 
 export default function Post({ post }) {
    return (
-      <div>
-         <div>
-            <p>Title: {post.title}</p>
+      <div className="post">
+         <article>
+            <h2>Title: {post.title}</h2>
             <p>Body: {post.body}</p>
-         </div>
-			<button>Delete</button>
+         </article>
+         <Button>Delete</Button>
       </div>
    );
 }
