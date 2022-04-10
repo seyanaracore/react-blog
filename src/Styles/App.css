@@ -13,3 +13,16 @@
 	max-width: 768px;
    margin-top: 45px;
 }
+.post {
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	border: 1px solid teal;
+	border-radius: 16px;
+}
+.post:not(:last-child) {
+	margin-bottom: 5px;
+}
+.newPostForm {
+   margin-bottom: 12px;
+}
