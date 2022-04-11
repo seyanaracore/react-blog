@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Select from "../UI/Select/Select";
 
 SortPosts.propTypes = {
-   sortHandler: PropTypes.func.isRequired,
+   postsSortHandler: PropTypes.func.isRequired,
 };
 
 export default function SortPosts({ postsSortHandler }) {

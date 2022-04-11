@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import Input from "../UI/Input/Input";
+import PropTypes from "prop-types";
+
+PostsFilter.propTypes = {
+   filterHandler: PropTypes.func.isRequired,
+};
 
 export default function PostsFilter({ filterHandler }) {
    const [inputValue, setInputValue] = useState("");
