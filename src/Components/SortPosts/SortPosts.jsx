@@ -11,7 +11,7 @@ export default function SortPosts({ postsSortHandler }) {
       { name: "По заголовку", value: "title" },
       { name: "По описанию", value: "body" },
    ];
-   const [sortBy, setSortBy] = useState();
+   const [sortBy, setSortBy] = useState("");
 
    const sortHandler = useCallback(
       (value) => {
@@ -22,11 +22,13 @@ export default function SortPosts({ postsSortHandler }) {
    );
 
    return (
-      <Select
-         options={sortingTypes}
-         defualtValue="Сортировка"
-         value={sortBy}
-         changeHandler={sortHandler}
-      />
+      <div style={{ margin: "8px 0" }}>
+         <Select
+            options={sortingTypes}
+            defualtValue="Сортировка"
+            value={sortBy}
+            changeHandler={sortHandler}
+         />
+      </div>
    );
 }

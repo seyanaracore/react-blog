@@ -2,6 +2,8 @@ import React from "react";
 import Post from "../Post/Post";
 import PropTypes from "prop-types";
 import { postsListStructure } from "./PostsList.types";
+import { TransitionGroup } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 
 PostsList.propTypes = {
    postsList: postsListStructure.isRequired,
@@ -14,9 +16,15 @@ export default function PostsList({ postsList, deletePost }) {
 
    return (
       <div>
-         {postsList.map((post) => {
-            return <Post post={post} deletePost={deletePost} key={post.id} />;
-         })}
+         <TransitionGroup>
+            {postsList.map((post) => {
+               return (
+                  <CSSTransition timeout={200} classNames="post" key={post.id}>
+                     <Post post={post} deletePost={deletePost} />
+                  </CSSTransition>
+               );
+            })}
+         </TransitionGroup>
       </div>
    );
 }
