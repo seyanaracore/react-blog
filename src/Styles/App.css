@@ -9,34 +9,35 @@
    justify-content: center;
 }
 .App {
-	width: 100%;
-	max-width: 768px;
+   width: 100%;
+   max-width: 768px;
    margin-top: 45px;
 }
 .post {
-	display: flex;
-	justify-content: space-between;
-	padding: 20px;
-	border: 1px solid teal;
-	border-radius: 16px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 20px;
+   border: 1px solid teal;
+   border-radius: 16px;
 }
 .post:not(:last-child) {
-	margin-bottom: 5px;
+   margin-bottom: 5px;
 }
 .newPostForm {
    margin-bottom: 12px;
 }
 .post-enter {
-	opacity: 0;
- }
- .post-enter-active {
-	opacity: 1;
-	transition: opacity 200ms;
- }
- .post-exit {
-	opacity: 1;
- }
- .post-exit-active {
-	opacity: 0;
-	transition: opacity 200ms;
- }
+   opacity: 0;
+}
+.post-enter-active {
+   opacity: 1;
+   transition: opacity 200ms;
+}
+.post-exit {
+   opacity: 1;
+}
+.post-exit-active {
+   opacity: 0;
+   transition: opacity 200ms;
+}

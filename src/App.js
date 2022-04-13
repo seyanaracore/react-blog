@@ -1,17 +1,19 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { PostService } from "./API/PostService";
 import NewPost from "./Components/NewPost/NewPost";
 import PostsList from "./Components/PostsList/PostsList";
 import PostsListsHandler from "./Components/PostsListHandlers/PostsListsHandler";
+import Loader from "./Components/UI/Loader/Loader";
+import useFetching from "./Hooks/useFetching";
 import "./Styles/App.css";
 
 function App() {
-   const [postsList, setPostsList] = useState([
-      { id: 1, title: "Post #1 - Title", body: "Post #1 - Content" },
-      { id: 2, title: "Post #2 - Title", body: "Post #2 - Content" },
-      { id: 3, title: "1", body: "2" },
-      { id: 4, title: "2", body: "1" },
-   ]);
+   const [postsList, setPostsList] = useState([]);
    const [handledPosts, setHandledPosts] = useState(postsList);
+   const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
+      const posts = await PostService.fetchAll();
+      setPostsList(posts);
+   });
 
    const addNewPost = useCallback((post) => {
       const newPost = { ...post, id: new Date().getTime() };
@@ -27,6 +29,11 @@ function App() {
       });
    }, []);
 
+   useEffect(() => {
+      fetchPosts();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+
    return (
       <div className="App">
          <NewPost addPostHandler={addNewPost} />
@@ -34,7 +41,18 @@ function App() {
             setHandledPosts={setHandledPosts}
             postsList={postsList}
          />
-         <PostsList postsList={handledPosts} deletePost={deletePost} />
+         {fetchError && (
+            <h1 style={{ textAlign: "center", color: "red" }}>
+               Error: {fetchError}
+            </h1>
+         )}
+         {isLoading ? (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+               <Loader/>
+            </div>
+         ) : (
+            <PostsList postsList={handledPosts} deletePost={deletePost} />
+         )}
       </div>
    );
 }

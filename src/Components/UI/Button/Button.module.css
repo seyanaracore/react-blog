@@ -1,8 +1,13 @@
 .button {
-	border: 1px solid teal;
-	background: none;
-	cursor: pointer;
-	padding: 5px;
-	border-radius: 4px;
-	font-weight: bold;
+   border: 1px solid teal;
+   background: none;
+   cursor: pointer;
+   padding: 8px;
+   border-radius: 4px;
+   font-weight: bold;
+   height: min-content;
+}
+.button:hover {
+   opacity: 0.8;
+   border-color: coral;
 }
