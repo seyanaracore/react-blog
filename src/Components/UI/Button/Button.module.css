@@ -4,7 +4,7 @@
    cursor: pointer;
    padding: 8px;
    border-radius: 4px;
-   font-weight: bold;
+   /* font-weight: bold; */
    height: min-content;
 }
 .button:hover {

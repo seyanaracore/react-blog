@@ -13,7 +13,9 @@ export default function Post({ post, deletePost }) {
    return (
       <div className="post">
          <article>
-            <h2>Title: {post.title}</h2>
+            <h2>
+               <span>{post.id}. </span>Title: {post.title}
+            </h2>
             <p>Body: {post.body}</p>
          </article>
          <Button onClick={() => deletePost(post)}>Delete</Button>

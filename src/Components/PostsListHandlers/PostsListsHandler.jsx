@@ -30,7 +30,10 @@ export default function PostsListsHandler({ postsList, setHandledPosts }) {
    return (
       <div>
          <hr style={{ margin: "8px 0" }} />
-         <PostsFilter filterHandler={filterHandler} />
+         <div>
+            <PostsFilter filterHandler={filterHandler} />
+            {/* <PostsLimit setPostsLimit={setPostsLimit} /> */}
+         </div>
          <SortPosts postsSortHandler={setSorting} />
       </div>
    );

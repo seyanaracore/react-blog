@@ -41,3 +41,13 @@
    opacity: 0;
    transition: opacity 200ms;
 }
+.page {
+   margin: 2px;
+}
+.page-active {
+   border: 1px;
+   font-weight: bold;
+}
+a.active {
+   color: red;
+}
