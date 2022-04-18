@@ -6,12 +6,13 @@
 
 #root {
    display: flex;
-   justify-content: center;
+   align-items: center;
+   flex-direction: column;
 }
 .App {
    width: 100%;
    max-width: 768px;
-   margin-top: 45px;
+   margin-top: 8px;
 }
 .post {
    display: flex;
@@ -48,6 +49,28 @@
    border: 1px;
    font-weight: bold;
 }
-a.active {
-   color: red;
+
+.nav-routes-container {
+   max-width: 768px;
+   margin: 0 auto;
+}
+.nav-routes-container > a {
+   color: black;
+   /* text-decoration: none; */
+}
+.nav-routes-container > a:not(:last-child) {
+   margin-right: 15px;
+}
+.nav-routes-container > a.active {
+   color: teal;
+   text-decoration: none;
+}
+.nav-routes {
+   width: 100%;
+   background-color: azure;
+   height: 30px;
+   border-bottom: 1px solid black;
+   display: flex;
+   align-items: center;
+   justify-content: flex-end;
 }

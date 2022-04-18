@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { PostService } from "../API/PostService";
 import NewPost from "../Components/NewPost/NewPost";
 import Pagination from "../Components/Pagination/Pagination";
@@ -9,9 +10,9 @@ import useFetching from "../Hooks/useFetching";
 import "../Styles/App.css";
 
 function Posts() {
+   const [page, setPage] = useState(null);
    const [postsList, setPostsList] = useState({});
    const [handledPosts, setHandledPosts] = useState(postsList);
-   const [page, setPage] = useState(1);
    const [limit, setLimit] = useState(10);
    const [totalPosts, setTotalPosts] = useState(0);
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
@@ -45,6 +46,17 @@ function Posts() {
       [page]
    );
 
+   const navigate = useNavigate();
+   const params = useParams();
+
+   const navigateToPage = (pageNum) => {
+      navigate(pageNum.toString());
+   };
+   useEffect(() => {
+      if (!params.page) navigate("1");
+      setPage(params.page);
+   }, [navigate, params.page]);
+
    useEffect(() => {
       fetchPosts();
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,8 +84,9 @@ function Posts() {
                <Pagination
                   itemsTotalCount={totalPosts}
                   limit={limit}
+                  setLimit={setLimit}
                   curPage={page}
-                  setPage={setPage}
+                  setPage={navigateToPage}
                />
             </>
          )}

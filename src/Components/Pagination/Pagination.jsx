@@ -15,7 +15,7 @@ export default function Pagination({
             return (
                <Button
                   style={
-                     page === curPage
+                     page === +curPage
                         ? {
                              fontWeight: "bold",
                              borderColor: "coral",
