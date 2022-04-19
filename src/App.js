@@ -1,21 +1,26 @@
-import React from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRouter from "./Components/AppRouter/AppRouter";
 import Navbar from "./Components/Navbar/Navbar";
-import About from "./Pages/About";
-import Posts from "./Pages/Posts";
+import PostsContext from "./Context";
 
 export default function App() {
+   const [postsList, setPostsList] = useState({});
+   const [totalPosts, setTotalPosts] = useState(0);
+
    return (
-      <BrowserRouter>
-         <Navbar />
-         <Routes>
-            <Route path="/" element={<Navigate to={"posts"} />} />
-            <Route path="posts" element={<Posts />}>
-               <Route index path=":page" element={<Posts />} />
-            </Route>
-            <Route path="about" element={<About />} />
-            <Route path="*" element={<h1>404</h1>} />
-         </Routes>
-      </BrowserRouter>
+      <PostsContext.Provider
+         value={{
+            postsList,
+            setPostsList,
+            totalPosts,
+            setTotalPosts,
+         }}
+      >
+         <BrowserRouter>
+            <Navbar />
+            <AppRouter />
+         </BrowserRouter>
+      </PostsContext.Provider>
    );
 }

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import Button from "../UI/Button/Button";
 import { postStructure } from "./Post.types";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 Post.propTypes = {
    post: postStructure.isRequired,
@@ -10,6 +11,9 @@ Post.propTypes = {
 };
 
 export default function Post({ post, deletePost }) {
+   const navigate = useNavigate()
+   const location = useLocation()
+
    return (
       <div className="post">
          <article>
@@ -18,7 +22,17 @@ export default function Post({ post, deletePost }) {
             </h2>
             <p>Body: {post.body}</p>
          </article>
-         <Button onClick={() => deletePost(post)}>Delete</Button>
+         <div
+            style={{
+               display: "flex",
+               flexDirection: "column",
+               alignItems: "flex-end",
+               alignSelf: "center",
+            }}
+         >
+            <Button style={{fontWeight: "bold"}} onClick={()=>navigate(location.pathname + "/post" +post.id.toString())}>Открыть</Button>
+            <Button onClick={() => deletePost(post)}>Delete</Button>
+         </div>
       </div>
    );
 }

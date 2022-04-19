@@ -1,21 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
-import { PostService } from "./API/PostService";
-import NewPost from "./Components/NewPost/NewPost";
-import Pagination from "./Components/Pagination/Pagination";
-import PostsList from "./Components/PostsList/PostsList";
-import PostsListsHandler from "./Components/PostsListHandlers/PostsListsHandler";
-import Loader from "./Components/UI/Loader/Loader";
-import useFetching from "./Hooks/useFetching";
-import "./Styles/App.css";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { PostService } from "../../API/PostService";
+import NewPost from "../../Components/NewPost/NewPost";
+import Pagination from "../../Components/Pagination/Pagination";
+import PostsListsHandler from "../../Components/PostsListHandlers/PostsListsHandler";
+import Loader from "../../Components/UI/Loader/Loader";
+import PostsContext from "../../Context";
+import useFetching from "../../Hooks/useFetching";
+import usePrevious from "../../Hooks/usePrev";
+import "../../Styles/App.css";
 
-function App() {
-   const [postsList, setPostsList] = useState({});
+function Posts() {
+   const { postsList, setPostsList } = useContext(PostsContext);
+   const { totalPosts, setTotalPosts } = useContext(PostsContext);
    const [handledPosts, setHandledPosts] = useState(postsList);
-   const [page, setPage] = useState(1);
+
+   const [page, setPage] = useState(null);
    const [limit, setLimit] = useState(10);
-   const [totalPosts, setTotalPosts] = useState(0);
+   const prevLimit = usePrevious(limit);
+
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
-      if (postsList[page]) return;
+      if (postsList[page] && limit === prevLimit && postsList[page].length === limit) return;
       const response = await PostService.fetchAll(limit, page);
       const posts = response.data;
       setPostsList((prev) => ({ ...prev, [page]: posts }));
@@ -45,10 +50,21 @@ function App() {
       [page]
    );
 
+   const navigate = useNavigate();
+   const params = useParams();
+
+   const navigateToPage = (pageNum) => {
+      navigate(pageNum.toString());
+   };
+   useEffect(() => {
+      if (!params.page) navigate("1");
+      setPage(params.page);
+   }, [navigate, params.page]);
+
    useEffect(() => {
       fetchPosts();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [page]);
+   }, [page, limit]);
 
    return (
       <div className="App">
@@ -68,12 +84,14 @@ function App() {
             </div>
          ) : (
             <>
-               <PostsList postsList={handledPosts} deletePost={deletePost} />
+               {/* <PostsList postsList={handledPosts} deletePost={deletePost} /> */}
+               <Outlet context={{postsList: handledPosts, deletePost}} />
                <Pagination
                   itemsTotalCount={totalPosts}
                   limit={limit}
+                  setLimit={setLimit}
                   curPage={page}
-                  setPage={setPage}
+                  setPage={navigateToPage}
                />
             </>
          )}
@@ -81,4 +99,4 @@ function App() {
    );
 }
 
-export default App;
+export default Posts;

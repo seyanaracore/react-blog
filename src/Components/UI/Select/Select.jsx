@@ -14,9 +14,11 @@ export default function Select({
 }) {
    return (
       <select value={value} onChange={(e) => changeHandler(e.target.value)}>
-         <option disabled value="">
-            {defualtValue}
-         </option>
+         {defualtValue && (
+            <option disabled value="">
+               {defualtValue}
+            </option>
+         )}
          {options.map((option) => {
             return (
                <option value={option.value} key={option.value}>

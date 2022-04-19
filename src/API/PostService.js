@@ -12,4 +12,8 @@ export class PostService {
       });
       return response;
    }
+   static async fetchPost(id) {
+      const response = await axios.get(APIUrl + `/${id}/comments`);
+      return response;
+   }
 }
