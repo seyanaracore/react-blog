@@ -6,7 +6,7 @@ import Loader from "../UI/Loader/Loader";
 import Modal from "../UI/Modal/Modal";
 
 export default function PostItem() {
-   const { post = [], postId } = useOutletContext();
+   const { post = {}, postId } = useOutletContext();
    const navigate = useNavigate();
    const [postComments, setPostComments] = useState([]);
    const [fetchComments, fetchErrror, isLoading] = useFetching(async () => {
@@ -25,35 +25,36 @@ export default function PostItem() {
             navigate(-1);
          }}
       >
-         {fetchErrror && <h1>{fetchErrror}</h1>}
+         <div>
+            {fetchErrror && <h1>{fetchErrror}</h1>}
 
-         {isLoading ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-               <Loader />
-            </div>
-         ) : (
-            <div>
-               <article>
-                  <h2>
-                     <span>{post.id}. </span>Title: {post.title}
-                  </h2>
-                  <p>Body: {post.body}</p>
-               </article>
-
-               <div>
-                  <h2>Comments:</h2>
-                  {postComments.map((comment) => (
-                     <div>
-                        <p>
-                           {comment.id} {comment.name}
-                        </p>
-                        <p>{comment.email}</p>
-                        <p>{comment.body}</p>
-                     </div>
-                  ))}
+            {isLoading ? (
+               <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Loader />
                </div>
-            </div>
-         )}
+            ) : (
+               <div>
+                  <article>
+                     <h2>{post.title}</h2>
+                     <p>{post.body}</p>
+                  </article>
+
+                  <div style={{ marginTop: 25 }}>
+                     <h2>Comments:</h2>
+                     {postComments.map((comment, idx) => (
+                        <div key={comment.id} className="post-comment">
+                           <h4>
+                              {idx + 1}. {comment.email}
+                           </h4>
+                           <p className="post-comment_name">Name: {comment.name}</p>
+                           <p>Body: {comment.body}</p>
+                           <hr/>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+            )}
+         </div>
       </Modal>
    );
 }

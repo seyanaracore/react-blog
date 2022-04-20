@@ -12,7 +12,7 @@ export class PostService {
       });
       return response;
    }
-   static async fetchPost(id) {
+   static async fetchPost(id = 1) {
       const response = await axios.get(APIUrl + `/${id}/comments`);
       return response;
    }

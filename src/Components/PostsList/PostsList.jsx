@@ -1,21 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Post from "../Post/Post";
-import PropTypes from "prop-types";
-import { postsListStructure } from "./PostsList.types";
-import { TransitionGroup } from "react-transition-group";
-import { CSSTransition } from "react-transition-group";
 import { Outlet, useOutletContext, useParams } from "react-router-dom";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import Post from "../Post/Post";
 
-PostsList.propTypes = {
-   postsList: postsListStructure.isRequired,
-   deletePost: PropTypes.func.isRequired,
-};
-
-export default function PostsList(/*{ postsList, deletePost }*/) {
+export default function PostsList() {
    const { postsList, deletePost } = useOutletContext();
    const [postId, setPostId] = useState(null);
    const postItem = useMemo(
-      () => postsList?.find((post) => post.id === postId),
+      () => postsList.find((post) => post.id === postId),
       [postId, postsList]
    );
    const params = useParams();
@@ -34,9 +26,7 @@ export default function PostsList(/*{ postsList, deletePost }*/) {
             {postsList.map((post) => {
                return (
                   <CSSTransition timeout={200} classNames="post" key={post.id}>
-                     <div>
-                        <Post post={post} deletePost={deletePost} />
-                     </div>
+                     <Post post={post} deletePost={deletePost} />
                   </CSSTransition>
                );
             })}

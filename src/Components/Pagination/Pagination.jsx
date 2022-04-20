@@ -12,27 +12,35 @@ export default function Pagination({
 }) {
    const pagesList = usePagination(itemsTotalCount, limit);
    return (
-      <div style={{ padding: "8px 0", margin: "0 auto" }}>
-         {pagesList.map((page) => {
-            return (
-               <Button
-                  style={
-                     page === +curPage
-                        ? {
-                             fontWeight: "bold",
-                             borderColor: "coral",
-                             margin: "0 2px",
-                          }
-                        : { margin: "0 2px" }
-                  }
-                  onClick={() => setPage(page)}
-                  key={page}
-               >
-                  {page}
-               </Button>
-            );
-         })}
-         <span style={{marginLeft: 6}}>
+      <div
+         style={{
+            padding: "8px",
+            display: "flex",
+            justifyContent: "space-between",
+         }}
+      >
+         <div>
+            {pagesList.map((page) => {
+               return (
+                  <Button
+                     style={
+                        page === +curPage
+                           ? {
+                                fontWeight: "bold",
+                                borderColor: "coral",
+                                margin: "0 2px",
+                             }
+                           : { margin: "0 2px" }
+                     }
+                     onClick={() => setPage(page)}
+                     key={page}
+                  >
+                     {page}
+                  </Button>
+               );
+            })}
+         </div>
+         <span>
             Вывод по:{" "}
             <Select
                options={[

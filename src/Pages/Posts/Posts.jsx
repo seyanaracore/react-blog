@@ -4,6 +4,7 @@ import { PostService } from "../../API/PostService";
 import NewPost from "../../Components/NewPost/NewPost";
 import Pagination from "../../Components/Pagination/Pagination";
 import PostsListsHandler from "../../Components/PostsListHandlers/PostsListsHandler";
+import Error from "../../Components/UI/Error/Error";
 import Loader from "../../Components/UI/Loader/Loader";
 import PostsContext from "../../Context";
 import useFetching from "../../Hooks/useFetching";
@@ -11,16 +12,24 @@ import usePrevious from "../../Hooks/usePrev";
 import "../../Styles/App.css";
 
 function Posts() {
+   const navigate = useNavigate();
+   const params = useParams();
+
    const { postsList, setPostsList } = useContext(PostsContext);
    const { totalPosts, setTotalPosts } = useContext(PostsContext);
-   const [handledPosts, setHandledPosts] = useState(postsList);
+   const [handledPosts, setHandledPosts] = useState([]);
 
    const [page, setPage] = useState(null);
    const [limit, setLimit] = useState(10);
    const prevLimit = usePrevious(limit);
 
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
-      if (postsList[page] && limit === prevLimit && postsList[page].length === limit) return;
+      if (
+         postsList[page] &&
+         limit === prevLimit &&
+         postsList[page].length === limit
+      )
+         return;
       const response = await PostService.fetchAll(limit, page);
       const posts = response.data;
       setPostsList((prev) => ({ ...prev, [page]: posts }));
@@ -50,20 +59,22 @@ function Posts() {
       [page]
    );
 
-   const navigate = useNavigate();
-   const params = useParams();
+   const navigateToPage = useCallback(
+      (pageNum) => {
+         navigate(pageNum.toString());
+      },
+      [navigate]
+   );
 
-   const navigateToPage = (pageNum) => {
-      navigate(pageNum.toString());
-   };
    useEffect(() => {
-      if (!params.page) navigate("1");
-      setPage(params.page);
+      const currentPage = params.page;
+      if (!currentPage) navigate("1");
+      
+      setPage(currentPage);
    }, [navigate, params.page]);
 
    useEffect(() => {
       fetchPosts();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [page, limit]);
 
    return (
@@ -73,19 +84,14 @@ function Posts() {
             setHandledPosts={setHandledPosts}
             postsList={postsList[page] || []}
          />
-         {fetchError && (
-            <h1 style={{ textAlign: "center", color: "red" }}>
-               Error: {fetchError}
-            </h1>
-         )}
+         {fetchError && <Error errorMessage={fetchError} />}
          {isLoading ? (
             <div style={{ display: "flex", justifyContent: "center" }}>
                <Loader />
             </div>
          ) : (
             <>
-               {/* <PostsList postsList={handledPosts} deletePost={deletePost} /> */}
-               <Outlet context={{postsList: handledPosts, deletePost}} />
+               <Outlet context={{ postsList: handledPosts, deletePost }} />
                <Pagination
                   itemsTotalCount={totalPosts}
                   limit={limit}

@@ -74,3 +74,9 @@
    align-items: center;
    justify-content: flex-end;
 }
+.post-comment:not(:last-child) {
+   margin-bottom: 12px;
+}
+.post-comment_name {
+   /* font-weight: 500; */
+}
