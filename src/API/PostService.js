@@ -16,4 +16,11 @@ export class PostService {
       const response = await axios.get(APIUrl + `/${id}/comments`);
       return response;
    }
+   static async newPost(post) {
+      if (!post) return;
+      post.userId = 1;
+
+      const response = await axios.post(APIUrl, post);
+      return response;
+   }
 }

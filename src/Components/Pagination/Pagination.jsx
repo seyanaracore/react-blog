@@ -1,16 +1,14 @@
 import React from "react";
-import { usePagination } from "../../Hooks/usePagination";
 import Button from "../UI/Button/Button";
 import Select from "../UI/Select/Select";
 
 export default function Pagination({
-   itemsTotalCount,
+   pagesList,
    limit,
    setLimit,
    curPage,
    setPage,
 }) {
-   const pagesList = usePagination(itemsTotalCount, limit);
    return (
       <div
          style={{

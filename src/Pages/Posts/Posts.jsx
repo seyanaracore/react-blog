@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { PostService } from "../../API/PostService";
 import NewPost from "../../Components/NewPost/NewPost";
@@ -8,6 +8,7 @@ import Error from "../../Components/UI/Error/Error";
 import Loader from "../../Components/UI/Loader/Loader";
 import PostsContext from "../../Context";
 import useFetching from "../../Hooks/useFetching";
+import { usePagination } from "../../Hooks/usePagination";
 import usePrevious from "../../Hooks/usePrev";
 import "../../Styles/App.css";
 
@@ -22,29 +23,38 @@ function Posts() {
    const [page, setPage] = useState(null);
    const [limit, setLimit] = useState(10);
    const prevLimit = usePrevious(limit);
+   const pagesList = usePagination(totalPosts, limit);
+   const currentPage = params.page;
 
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
       if (
-         postsList[page] &&
-         limit === prevLimit &&
-         postsList[page].length === limit
+         postsList[page] //&&
+         // limit === prevLimit &&
+         // postsList[page].length === limit
       )
          return;
       const response = await PostService.fetchAll(limit, page);
       const posts = response.data;
       setPostsList((prev) => ({ ...prev, [page]: posts }));
-      setTotalPosts(response.headers["x-total-count"]);
+      if (!totalPosts) setTotalPosts(+response.headers["x-total-count"]);
    });
 
    const addNewPost = useCallback(
-      (post) => {
-         const newPost = { ...post, id: new Date().getTime() };
+      async (post) => {
+         const response = await PostService.newPost(post);
+         const newPost = response.data;
+         setTotalPosts(totalPosts + 1);
+
+         const pageNum = pagesList.length;
 
          setPostsList((prev) => {
-            return { ...prev, [page]: [...prev[page], newPost] };
+            return {
+               ...prev,
+               [pageNum]: [...prev[pageNum], newPost],
+            };
          });
       },
-      [page]
+      [pagesList, totalPosts, setTotalPosts, setPostsList]
    );
 
    const deletePost = useCallback(
@@ -67,11 +77,15 @@ function Posts() {
    );
 
    useEffect(() => {
-      const currentPage = params.page;
       if (!currentPage) navigate("1");
-      
+
       setPage(currentPage);
-   }, [navigate, params.page]);
+   }, [navigate, currentPage]);
+
+   useEffect(() => {
+      if (pagesList.length && currentPage > pagesList.length)
+         navigate(pagesList.length.toString());
+   }, [limit, currentPage, navigate, pagesList.length]);
 
    useEffect(() => {
       fetchPosts();
@@ -93,7 +107,7 @@ function Posts() {
             <>
                <Outlet context={{ postsList: handledPosts, deletePost }} />
                <Pagination
-                  itemsTotalCount={totalPosts}
+                  pagesList={pagesList}
                   limit={limit}
                   setLimit={setLimit}
                   curPage={page}
