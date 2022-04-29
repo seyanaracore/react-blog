@@ -1,70 +1,67 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { PostService } from "../../API/PostService";
-import NewPost from "../../Components/NewPost/NewPost";
-import Pagination from "../../Components/Pagination/Pagination";
-import PostsListsHandler from "../../Components/PostsListHandlers/PostsListsHandler";
-import Error from "../../Components/UI/Error/Error";
-import Loader from "../../Components/UI/Loader/Loader";
-import PostsContext from "../../Context";
-import useFetching from "../../Hooks/useFetching";
-import { usePagination } from "../../Hooks/usePagination";
-import usePrevious from "../../Hooks/usePrev";
-import "../../Styles/App.css";
+import { PostService } from "../API/PostService";
+import NewPost from "../Components/NewPost/NewPost";
+import Pagination from "../Components/Pagination/Pagination";
+import PostsListsHandler from "../Components/PostsListHandlers/PostsListsHandler";
+import Error from "../Components/UI/Error/Error";
+import Loader from "../Components/UI/Loader/Loader";
+import useFetching from "../Hooks/useFetching";
+import { usePagination } from "../Hooks/usePagination";
+import {
+   addPost, setPage, setPagePosts, setTotalPosts
+} from "../Store/postsSlice";
+import {
+   selectPage,
+   selectPostsList,
+   selectTotalPosts
+} from "../Store/selectors";
+import "../Styles/App.css";
 
 function Posts() {
    const navigate = useNavigate();
    const params = useParams();
+   const dispatch = useDispatch();
 
-   const { postsList, setPostsList } = useContext(PostsContext);
-   const { totalPosts, setTotalPosts } = useContext(PostsContext);
+   const postsList = useSelector(selectPostsList);
+   console.log(postsList);
+   const totalPosts = useSelector(selectTotalPosts);
    const [handledPosts, setHandledPosts] = useState([]);
 
-   const [page, setPage] = useState(null);
+   const page = useSelector(selectPage);
    const [limit, setLimit] = useState(10);
-   const prevLimit = usePrevious(limit);
    const pagesList = usePagination(totalPosts, limit);
-   const currentPage = params.page;
+   const currentPage = +params.page;
 
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
-      if (
-         postsList[page] //&&
-         // limit === prevLimit &&
-         // postsList[page].length === limit
-      )
-         return;
+      if (postsList[page]) return;
       const response = await PostService.fetchAll(limit, page);
       const posts = response.data;
-      setPostsList((prev) => ({ ...prev, [page]: posts }));
-      if (!totalPosts) setTotalPosts(+response.headers["x-total-count"]);
+
+      dispatch(setPagePosts(posts));
+      if (!totalPosts)
+         dispatch(setTotalPosts(+response.headers["x-total-count"]));
    });
 
    const addNewPost = useCallback(
       async (post) => {
          const response = await PostService.newPost(post);
          const newPost = response.data;
-         setTotalPosts(totalPosts + 1);
 
-         const pageNum = pagesList.length;
-
-         setPostsList((prev) => {
-            return {
-               ...prev,
-               [pageNum]: [...prev[pageNum], newPost],
-            };
-         });
+         dispatch(addPost(newPost));
       },
-      [pagesList, totalPosts, setTotalPosts, setPostsList]
+      [dispatch]
    );
 
    const deletePost = useCallback(
       (post) => {
-         setPostsList((prev) => {
-            return {
-               ...prev,
-               [page]: prev[page].filter((p) => p.id !== post.id),
-            };
-         });
+         // setPostsList((prev) => {
+         //    return {
+         //       ...prev,
+         //       [page]: prev[page].filter((p) => p.id !== post.id),
+         //    };
+         // });
       },
       [page]
    );
@@ -79,11 +76,11 @@ function Posts() {
    useEffect(() => {
       if (!currentPage) navigate("1");
 
-      setPage(currentPage);
-   }, [navigate, currentPage]);
+      dispatch(setPage(currentPage));
+   }, [currentPage, dispatch, navigate]);
 
    useEffect(() => {
-      if (pagesList.length && currentPage > pagesList.length)
+      if (currentPage && pagesList.length && currentPage > pagesList.length)
          navigate(pagesList.length.toString());
    }, [limit, currentPage, navigate, pagesList.length]);
 
