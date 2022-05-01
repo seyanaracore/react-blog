@@ -8,14 +8,20 @@ import PostsListsHandler from "../Components/PostsListHandlers/PostsListsHandler
 import Error from "../Components/UI/Error/Error";
 import Loader from "../Components/UI/Loader/Loader";
 import useFetching from "../Hooks/useFetching";
-import { usePagination } from "../Hooks/usePagination";
 import {
-   addPost, setPage, setPagePosts, setTotalPosts
+   addPost,
+   removePost,
+   setPage,
+   setPagePosts,
+   setTotalPosts,
+   setLimit,
 } from "../Store/postsSlice";
 import {
+   selectLimit,
    selectPage,
-   selectPostsList,
-   selectTotalPosts
+   selectPagePosts,
+   selectTotalPages,
+   selectTotalPosts,
 } from "../Store/selectors";
 import "../Styles/App.css";
 
@@ -24,22 +30,21 @@ function Posts() {
    const params = useParams();
    const dispatch = useDispatch();
 
-   const postsList = useSelector(selectPostsList);
-   console.log(postsList);
+   const postsList = useSelector(selectPagePosts);
    const totalPosts = useSelector(selectTotalPosts);
    const [handledPosts, setHandledPosts] = useState([]);
 
    const page = useSelector(selectPage);
-   const [limit, setLimit] = useState(10);
-   const pagesList = usePagination(totalPosts, limit);
+   const limit = useSelector(selectLimit);
+   const totalPages = useSelector(selectTotalPages);
    const currentPage = +params.page;
 
    const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
-      if (postsList[page]) return;
+      if (!page || postsList.length) return;
       const response = await PostService.fetchAll(limit, page);
       const posts = response.data;
 
-      dispatch(setPagePosts(posts));
+      posts.length && dispatch(setPagePosts(posts));
       if (!totalPosts)
          dispatch(setTotalPosts(+response.headers["x-total-count"]));
    });
@@ -56,12 +61,7 @@ function Posts() {
 
    const deletePost = useCallback(
       (post) => {
-         // setPostsList((prev) => {
-         //    return {
-         //       ...prev,
-         //       [page]: prev[page].filter((p) => p.id !== post.id),
-         //    };
-         // });
+         dispatch(removePost(post));
       },
       [page]
    );
@@ -74,15 +74,14 @@ function Posts() {
    );
 
    useEffect(() => {
-      if (!currentPage) navigate("1");
-
-      dispatch(setPage(currentPage));
-   }, [currentPage, dispatch, navigate]);
-
-   useEffect(() => {
-      if (currentPage && pagesList.length && currentPage > pagesList.length)
-         navigate(pagesList.length.toString());
-   }, [limit, currentPage, navigate, pagesList.length]);
+      if (!currentPage) {
+         navigate("1");
+      } else if (totalPages && currentPage > totalPages) {
+         navigate(totalPages.toString());
+      } else {
+         dispatch(setPage(currentPage));
+      }
+   }, [currentPage, dispatch, totalPages, navigate]);
 
    useEffect(() => {
       fetchPosts();
@@ -93,7 +92,7 @@ function Posts() {
          <NewPost addPostHandler={addNewPost} />
          <PostsListsHandler
             setHandledPosts={setHandledPosts}
-            postsList={postsList[page] || []}
+            postsList={postsList}
          />
          {fetchError && <Error errorMessage={fetchError} />}
          {isLoading ? (
@@ -104,9 +103,8 @@ function Posts() {
             <>
                <Outlet context={{ postsList: handledPosts, deletePost }} />
                <Pagination
-                  pagesList={pagesList}
                   limit={limit}
-                  setLimit={setLimit}
+                  setLimit={(limit) => dispatch(setLimit(limit))}
                   curPage={page}
                   setPage={navigateToPage}
                />

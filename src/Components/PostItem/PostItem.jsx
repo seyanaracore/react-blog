@@ -41,16 +41,23 @@ export default function PostItem() {
 
                   <div style={{ marginTop: 25 }}>
                      <h2>Comments:</h2>
-                     {postComments.map((comment, idx) => (
-                        <div key={comment.id} className="post-comment">
-                           <h4>
-                              {idx + 1}. {comment.email}
-                           </h4>
-                           <p className="post-comment_name">Name: {comment.name}</p>
-                           <p>Body: {comment.body}</p>
-                           <hr/>
-                        </div>
-                     ))}
+
+                     {postComments.length ? (
+                        postComments.map((comment, idx) => (
+                           <div key={comment.id} className="post-comment">
+                              <h4>
+                                 {idx + 1}. {comment.email}
+                              </h4>
+                              <p className="post-comment_name">
+                                 Name: {comment.name}
+                              </p>
+                              <p>Body: {comment.body}</p>
+                              <hr />
+                           </div>
+                        ))
+                     ) : (
+                        <p>Комментариев нет</p>
+                     )}
                   </div>
                </div>
             )}

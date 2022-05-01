@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { createRef, useState } from "react";
 import Button from "../UI/Button/Button";
 import Input from "../UI/Input/Input";
 import PropTypes from "prop-types";
 import Modal from "../UI/Modal/Modal";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 NewPost.propTypes = {
    addPostHandler: PropTypes.func.isRequired,
@@ -26,6 +28,11 @@ export default function NewPost({ addPostHandler }) {
    };
 
    const [modalVisible, setModalVisible] = useState(false);
+   const titleInput = createRef();
+
+   useEffect(() => {
+      modalVisible && titleInput.current.focus();
+   }, [modalVisible]);
 
    return (
       <>
@@ -35,6 +42,7 @@ export default function NewPost({ addPostHandler }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Title"
+                  ref={titleInput}
                />
                <Input
                   value={body}

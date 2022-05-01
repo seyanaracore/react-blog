@@ -1,14 +1,19 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { usePagination } from "../../Hooks/usePagination";
+import { selectTotalPages } from "../../Store/selectors";
 import Button from "../UI/Button/Button";
 import Select from "../UI/Select/Select";
 
 export default function Pagination({
-   pagesList,
+   // pagesList,
    limit,
    setLimit,
    curPage,
    setPage,
 }) {
+   const pagesCount = useSelector(selectTotalPages);
+   const pagesList = usePagination(pagesCount);
    return (
       <div
          style={{

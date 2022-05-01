@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// const getInitialLastPage = (totalPosts, limit)
+
 const postsSlice = createSlice({
    name: "posts",
    initialState: {
       page: null,
       limit: 10,
       totalPosts: 0,
-      postsList: {},
+      postsList: [],
       handledPosts: [],
    },
    reducers: {
@@ -17,6 +19,7 @@ const postsSlice = createSlice({
          ];
       },
       addPost(state, action) {
+         state.totalPosts++;
          const pageNum = Math.ceil(state.totalPosts / state.limit);
          state.postsList[pageNum]
             ? state.postsList[pageNum].push(action.payload)
@@ -24,8 +27,19 @@ const postsSlice = createSlice({
       },
       removePost(state, action) {
          state.postsList[state.page] = state.postsList[state.page].filter(
-            (post) => post.id !== action.payload
+            (post) => post.id !== action.payload.id
          );
+         if (!state.postsList[state.page].length) {
+            delete state.postsList[state.page];
+            console.log(
+               "delete page key",
+               "page: ",
+               state.page,
+               "postsList: ",
+               state.postsList
+            );
+         }
+         state.totalPosts--;
       },
       setTotalPosts(state, action) {
          state.totalPosts = action.payload;

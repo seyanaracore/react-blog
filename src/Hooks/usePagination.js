@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import { getPagesCountList } from "../Utils/Pages";
 
-export const usePagination = (itemsTotalCount, limit) =>
+export const usePagination = (pagesCount = null) =>
    useMemo(() => {
-      return getPagesCountList(itemsTotalCount, limit);
-   }, [itemsTotalCount, limit]);
+      return new Array(pagesCount || 1).fill().map((_, idx) => idx + 1);
+   }, [pagesCount]);
