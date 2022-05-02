@@ -81,7 +81,7 @@ function Posts() {
       } else {
          dispatch(setPage(currentPage));
       }
-   }, [currentPage, dispatch, totalPages, navigate]);
+   }, [currentPage, totalPages]);
 
    useEffect(() => {
       fetchPosts();

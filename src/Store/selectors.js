@@ -1,7 +1,8 @@
 export const selectTotalPages = (state) => {
    const postsTotalPages =
       Math.ceil(state.posts.totalPosts / state.posts.limit) || null;
-   const postsListLastPage = +Object.keys(state.posts.postsList).at(-1) || null;
+   
+   const postsListLastPage = Object.keys(state.posts.postsList).at(-1) || null;
 
    return Math.max(postsListLastPage, postsTotalPages) || null;
 };
