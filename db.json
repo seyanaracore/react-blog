@@ -10,6 +10,12 @@
       "title": "json-server 2",
       "body": "Same post",
       "id": 2
+    },
+    {
+      "title": "New Post",
+      "body": "Same body",
+      "author": "User",
+      "id": 3
     }
   ],
   "comments": [

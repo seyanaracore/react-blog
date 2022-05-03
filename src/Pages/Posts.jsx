@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
@@ -7,21 +8,15 @@ import Pagination from "../Components/Pagination/Pagination";
 import PostsListsHandler from "../Components/PostsListHandlers/PostsListsHandler";
 import Error from "../Components/UI/Error/Error";
 import Loader from "../Components/UI/Loader/Loader";
-import useFetching from "../Hooks/useFetching";
+import { fetchPosts } from "../Store/reducers/ActionCreators";
+// import useFetching from "../Hooks/useFetching";
+import { setLimit, setPage } from "../Store/reducers/PostsSlice";
 import {
-   addPost,
-   removePost,
-   setPage,
-   setPagePosts,
-   setTotalPosts,
-   setLimit,
-} from "../Store/postsSlice";
-import {
+   selectFetchError,
+   selectIsLoading,
    selectLimit,
    selectPage,
-   selectPagePosts,
    selectTotalPages,
-   selectTotalPosts,
 } from "../Store/selectors";
 import "../Styles/App.css";
 
@@ -30,8 +25,6 @@ function Posts() {
    const params = useParams();
    const dispatch = useDispatch();
 
-   const postsList = useSelector(selectPagePosts);
-   const totalPosts = useSelector(selectTotalPosts);
    const [handledPosts, setHandledPosts] = useState([]);
 
    const page = useSelector(selectPage);
@@ -39,33 +32,23 @@ function Posts() {
    const totalPages = useSelector(selectTotalPages);
    const currentPage = +params.page;
 
-   const [fetchPosts, fetchError, isLoading] = useFetching(async () => {
-      if (!page || postsList.length) return;
-      const response = await PostService.fetchAll(limit, page);
-      const posts = response.data;
+   const fetchError = useSelector(selectFetchError);
+   const isLoading = useSelector(selectIsLoading);
 
-      posts.length && dispatch(setPagePosts(posts));
-      if (!totalPosts)
-         dispatch(setTotalPosts(+response.headers["x-total-count"]));
-   });
+   const handleFetchPosts = useCallback(() => {
+      page && dispatch(fetchPosts());//todo: замыкает undefined
+   }, [page]);
 
-   const addNewPost = useCallback(
-      async (post) => {
-         const response = await PostService.newPost(post);
-         const newPost = response.data;
+   const addNewPost = useCallback(async (post) => {
+      post.author = "User";
+      await PostService.newPost(post);
+      handleFetchPosts();
+   }, []);
 
-         dispatch(addPost(newPost));
-      },
-      [dispatch]
-   );
-
-   const deletePost = useCallback(
-      (post) => {
-         dispatch(removePost(post));
-         PostService.deletePost(post)
-      },
-      [page]
-   );
+   const deletePost = useCallback(async (post) => {
+      await PostService.deletePost(post);
+      handleFetchPosts();
+   }, []);
 
    const navigateToPage = useCallback(
       (pageNum) => {
@@ -85,7 +68,7 @@ function Posts() {
    }, [currentPage, totalPages]);
 
    useEffect(() => {
-      fetchPosts();
+      handleFetchPosts();
    }, [page, limit]);
 
    return (
@@ -93,7 +76,7 @@ function Posts() {
          <NewPost addPostHandler={addNewPost} />
          <PostsListsHandler
             setHandledPosts={setHandledPosts}
-            postsList={postsList}
+            // postsList={postsList}
          />
          {fetchError && <Error errorMessage={fetchError} />}
          {isLoading ? (
