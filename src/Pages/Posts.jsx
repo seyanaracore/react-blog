@@ -62,6 +62,7 @@ function Posts() {
    const deletePost = useCallback(
       (post) => {
          dispatch(removePost(post));
+         PostService.deletePost(post)
       },
       [page]
    );
