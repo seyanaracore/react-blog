@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const APIUrl = "https://jsonplaceholder.typicode.com/posts";
+const APIUrl = "http://localhost:3004/posts";
 
 export class PostService {
    static async fetchAll(limit = 10, page = 1) {
@@ -18,9 +18,14 @@ export class PostService {
    }
    static async newPost(post) {
       if (!post) return;
-      post.userId = 1;
 
       const response = await axios.post(APIUrl, post);
+      return response;
+   }
+   static async deletePost(post) {
+      if (!post) return;
+
+      const response = await axios.delete(APIUrl+"/"+post.id);
       return response;
    }
 }
