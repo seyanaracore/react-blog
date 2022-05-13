@@ -25,7 +25,7 @@ export class PostService {
    static async deletePost(post) {
       if (!post) return;
 
-      const response = await axios.delete(APIUrl+"/"+post.id);
+      const response = await axios.delete(APIUrl + "/" + post.id);
       return response;
    }
    static async updatePost(post) {

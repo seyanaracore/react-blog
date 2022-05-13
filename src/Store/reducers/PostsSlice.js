@@ -4,8 +4,8 @@ import { fetchPosts } from "./ActionCreators";
 const postsSlice = createSlice({
    name: "posts",
    initialState: {
-      page: undefined,
-      totalPosts: undefined,
+      page: 1,
+      totalPosts: null,
       limit: 10,
       postsList: [],
       isLoading: false,

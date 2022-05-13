@@ -35,9 +35,10 @@ function Posts() {
    const fetchError = useSelector(selectFetchError);
    const isLoading = useSelector(selectIsLoading);
 
-   const handleFetchPosts = useCallback(() => {
-      page && dispatch(fetchPosts());//todo: замыкает undefined
-   }, [page]);
+   const handleFetchPosts = () => {
+      if (!page) return;
+      dispatch(fetchPosts());
+   };
 
    const addNewPost = useCallback(async (post) => {
       post.author = "User";
