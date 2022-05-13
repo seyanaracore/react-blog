@@ -12,7 +12,6 @@ Post.propTypes = {
 
 export default function Post({ post, deletePost }) {
    const navigate = useNavigate();
-   const location = useLocation();
 
    return (
       <div className="post">
@@ -33,7 +32,7 @@ export default function Post({ post, deletePost }) {
          >
             <Button
                onClick={() =>
-                  navigate(location.pathname + "/post" + post.id.toString())
+                  navigate("post" + post.id.toString())
                }
             >
                Открыть

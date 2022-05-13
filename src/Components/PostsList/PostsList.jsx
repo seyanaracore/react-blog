@@ -23,9 +23,9 @@ export default function PostsList() {
    return (
       <div>
          <TransitionGroup>
-            {postsList.map((post) => {
+            {postsList.map((post, idx) => {
                return (
-                  <CSSTransition timeout={200} classNames="post" key={post.id}>
+                  <CSSTransition timeout={200} classNames="post" key={idx}>
                      <Post post={post} deletePost={deletePost} />
                   </CSSTransition>
                );

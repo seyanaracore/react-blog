@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import About from "../../Pages/About";
-import Posts from "../../Pages/Posts/Posts";
+import Posts from "../../Pages/Posts";
 import PostItem from "../PostItem/PostItem";
 import PostsList from "../PostsList/PostsList";
 

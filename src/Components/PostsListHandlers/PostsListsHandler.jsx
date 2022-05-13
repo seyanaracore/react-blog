@@ -1,16 +1,20 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import usePosts from "../../Hooks/usePosts";
+import { selectPostsList } from "../../Store/selectors";
 import PostsFilter from "../PostsFilter/PostsFilter";
 import { postsListStructure } from "../PostsList/PostsList.types";
 import SortPosts from "../SortPosts/SortPosts";
 
 PostsListsHandler.propTypes = {
-   postsList: postsListStructure.isRequired,
+   // postsList: postsListStructure.isRequired, 
    setHandledPosts: PropTypes.func.isRequired,
 };
 
-export default function PostsListsHandler({ postsList, setHandledPosts }) {
+export default function PostsListsHandler({ /*postsList,*/ setHandledPosts }) {
+   const postsList = useSelector(selectPostsList);
+
    const [sortBy, setSortBy] = useState(null);
    const [filter, setFilter] = useState("");
 
